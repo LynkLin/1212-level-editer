@@ -152,6 +152,9 @@ public class LevelEditer extends JFrame {
 	protected void uiSaveActionPerformed(ActionEvent evt) {
 		if (uiChooserFile.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File file = uiChooserFile.getSelectedFile();
+			if (!file.getAbsolutePath().toLowerCase().endsWith(".png")) {
+				file = new File(file.getAbsolutePath() + ".png");
+			}
 			try {
 				image = new BufferedImage(12, 13, BufferedImage.TYPE_INT_ARGB);
 				for (int i = 0; i < buttons.size(); i++) {
