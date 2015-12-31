@@ -48,14 +48,16 @@ public class LevelEditer extends JFrame {
 			}
 		});
 	}
-	
+
+	private JLabel uiTotalColorNum;
 	private List<LevelButton> buttons;
 	private JSpinner uiStep;
 	private JFileChooser uiChooserFile;
 	private BufferedImage image;
 
+
 	public LevelEditer() {
-		buttons = new ArrayList<LevelButton>();
+		buttons = new ArrayList<>();
 		initComponents();
 	}
 	
@@ -70,7 +72,7 @@ public class LevelEditer extends JFrame {
 		{
 			JPanel panel = new JPanel();
 			contentPane.add(panel, BorderLayout.NORTH);
-			panel.setLayout(new MigLayout("", "[][60px:60px:60px][]50[]", "[]"));
+			panel.setLayout(new MigLayout("", "[][60px:60px:60px][]20[]20[][]", "[]"));
 			{
 				JLabel label = new JLabel("STEP:");
 				panel.add(label, "cell 0 0");
@@ -98,6 +100,16 @@ public class LevelEditer extends JFrame {
 				});
 				panel.add(uiLoad, "cell 3 0");
 			}
+			{
+				JLabel label = new JLabel("TOTAL NUM:");
+				label.setForeground(Color.BLUE);
+				panel.add(label, "cell 4 0");
+			}
+			{
+				uiTotalColorNum = new JLabel("0");
+				uiTotalColorNum.setForeground(Color.BLUE);
+				panel.add(uiTotalColorNum, "cell 5 0");
+			}
 		}
 		{
 			JPanel panel = new JPanel();
@@ -123,7 +135,14 @@ public class LevelEditer extends JFrame {
 			}
 			for (int row = 1; row <= 12; row++) {
 				for (int column = 1; column <= 12; column++) {
-					LevelButton button = new LevelButton();
+					LevelButton button = new LevelButton(new ButtonColorChangeListener() {
+						@Override
+						public void colorChanged(int changeNum) {
+							int ori = Integer.parseInt(uiTotalColorNum.getText());
+							ori += changeNum;
+							uiTotalColorNum.setText(Integer.toString(ori));
+						}
+					});
 					panel.add(button, "cell " + column + " " + row + ",grow");
 					buttons.add(button);
 				}
@@ -182,13 +201,19 @@ public class LevelEditer extends JFrame {
 		if(uiChooserFile.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 			File file = uiChooserFile.getSelectedFile();
 			try {
+				int totalNum = 0;
 				image = ImageIO.read(file);
 				for(int x = 0; x < 12; x++) {
 					for (int y = 0; y < 12; y++) {
 						int color = image.getRGB(x, y);
 						buttons.get(y * 12 + x).setImgColor(color);
+						if (color != LevelButton.IMG_COLOR_EMPTY.getRGB()) {
+							totalNum ++;
+						}
 					}
 				}
+				uiTotalColorNum.setText(Integer.toString(totalNum));
+
 				String binaryStr = "";
 				for (int i = 0; i < 12; i++) {
 					int color = image.getRGB(i, 12);

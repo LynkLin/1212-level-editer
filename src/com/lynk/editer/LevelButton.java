@@ -29,6 +29,8 @@ public class LevelButton extends JPanel {
 
 	private CardLayout card;
 	private JLabel uiColor;
+	private ButtonColorChangeListener buttonColorChangeListener;
+
 	
 	public Color getImgColor() {
 		if (SHOW_COLOR_RED.equals(uiColor.getBackground())) {
@@ -58,8 +60,9 @@ public class LevelButton extends JPanel {
 		}
 	}
 	
-	public LevelButton() {
+	public LevelButton(ButtonColorChangeListener buttonColorChangeListener) {
 		super();
+		this.buttonColorChangeListener = buttonColorChangeListener;
 		setBorder(new LineBorder(new Color(0, 0, 0)));
 		initComponents();
 		initListener();
@@ -88,8 +91,10 @@ public class LevelButton extends JPanel {
 					uiColor.setBackground(SHOW_COLOR_YELLOW);
 				} else if (SHOW_COLOR_YELLOW.equals(uiColor.getBackground())) {
 					uiColor.setBackground(SHOW_COLOR_EMPTY);
+					buttonColorChangeListener.colorChanged(-1);
 				} else if (SHOW_COLOR_EMPTY.equals(uiColor.getBackground())){
 					uiColor.setBackground(SHOW_COLOR_RED);
+					buttonColorChangeListener.colorChanged(1);
 				}
 			}
 			
